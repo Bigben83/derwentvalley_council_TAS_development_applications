@@ -12,7 +12,7 @@ main_page_url = 'https://www.derwentvalley.tas.gov.au/home/latest-news?f.News+ca
 
 # Step 1: Fetch the page content
 begin
-  logger.info("Fetching page content from: #{url}")
+  logger.info("Fetching page content from: #{main_page_url}")
   page_html = open(main_page_url).read
   logger.info("Successfully fetched page content.")
 rescue => e
