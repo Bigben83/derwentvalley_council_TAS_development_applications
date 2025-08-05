@@ -54,7 +54,7 @@ GEM
 
 GIT
   remote: https://github.com/openaustralia/scraperwiki-ruby.git
-  revision: 23061c979b8b18ed1cb80f46b9cfa8e5bd504b2b
+  revision: HEAD
   branch: morph_defaults
   specs:
     scraperwiki (1.4.0)
