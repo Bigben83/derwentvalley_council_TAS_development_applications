@@ -1,27 +1,37 @@
+require 'capybara'
+require 'selenium-webdriver'
 require 'nokogiri'
-require 'open-uri'
 require 'sqlite3'
 require 'logger'
 require 'date'
 
-# Initialize the logger
 logger = Logger.new(STDOUT)
 
-# Define the URL of the page
-main_page_url = 'https://www.derwentvalley.tas.gov.au/home/latest-news?f.News+category%7CnewsCategory=Public+Notice'
-
-# Step 1: Fetch the page content
-begin
-  logger.info("Fetching page content from: #{main_page_url}")
-  page_html = open(main_page_url, "User-Agent" => "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36").read
-  logger.info("Successfully fetched page content.")
-rescue => e
-  logger.error("Failed to fetch page content: #{e}")
-  exit
+Capybara.register_driver :selenium_chrome_headless_morph do |app|
+  Capybara::Selenium::Driver.load_selenium
+  options = ::Selenium::WebDriver::Chrome::Options.new
+  options.add_argument('--headless')
+  options.add_argument('--disable-gpu')
+  options.add_argument('--no-sandbox')
+  options.add_argument('--disable-site-isolation-trials')
+  Capybara::Selenium::Driver.new(app, browser: :chrome, options: options)
 end
 
-# Step 2: Parse the page content using Nokogiri
-main_page = Nokogiri::HTML(page_html)
+session = Capybara::Session.new(:selenium_chrome_headless_morph)
+
+# Visit the page with browser emulation
+logger.info("Visiting page: https://www.derwentvalley.tas.gov.au/home/latest-news?f.News+category%7CnewsCategory=Public+Notice")
+session.visit('https://www.derwentvalley.tas.gov.au/home/latest-news?f.News+category%7CnewsCategory=Public+Notice')
+
+# Wait for page content to load
+sleep 5 # (or better yet, implement Capybara's wait for elements)
+
+# Parse with Nokogiri
+doc = Nokogiri::HTML(session.html)
+
+# Now process .news-listing__item as before...
+logger.info("Found #{doc.css('.news-listing__item').count} news items.")
+
 
 # Step 3: Initialize the SQLite database
 db = SQLite3::Database.new "data.sqlite"
@@ -107,3 +117,4 @@ main_page.css('.news-listing__item').each do |item|
   
   
 end
+session.quit
