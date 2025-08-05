@@ -13,7 +13,8 @@ main_page_url = 'https://www.derwentvalley.tas.gov.au/home/latest-news?f.News+ca
 # Step 1: Fetch the page content
 begin
   logger.info("Fetching page content from: #{main_page_url}")
-  page_html = open(main_page_url).read
+  page_html = open(main_page_url, "User-Agent" => "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36").read
+
   logger.info("Successfully fetched page content.")
 rescue => e
   logger.error("Failed to fetch page content: #{e}")
