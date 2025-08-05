@@ -14,7 +14,6 @@ main_page_url = 'https://www.derwentvalley.tas.gov.au/home/latest-news?f.News+ca
 begin
   logger.info("Fetching page content from: #{main_page_url}")
   page_html = open(main_page_url, "User-Agent" => "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36").read
-
   logger.info("Successfully fetched page content.")
 rescue => e
   logger.error("Failed to fetch page content: #{e}")
@@ -78,9 +77,15 @@ main_page.css('.news-listing__item').each do |item|
 
   # Extract the link to the detailed page
   detail_link = item.at_css('.news-listing__item-link')['href']
-
+  
   # Open and parse the detailed page
-  detailed_page = Nokogiri::HTML(open(detail_link, "User-Agent" => "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36"))
+  begin
+    detailed_html = open(detail_link, "User-Agent" => "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36").read
+    detailed_page = Nokogiri::HTML(detailed_html)
+  rescue => e
+    logger.error("Failed to fetch detailed page #{detail_link}: #{e}")
+    next
+  end
 
   # Extracting the table data for council reference, address, and description
   council_reference_detail = detailed_page.at_css('table tbody tr td:nth-child(1)').text.strip
