@@ -22,7 +22,7 @@ rescue => e
 end
 
 # Step 2: Parse the page content using Nokogiri
-main_page = Nokogiri::HTML(main_page_url)
+main_page = Nokogiri::HTML(page_html)
 
 # Step 3: Initialize the SQLite database
 db = SQLite3::Database.new "data.sqlite"
@@ -80,7 +80,7 @@ main_page.css('.news-listing__item').each do |item|
   detail_link = item.at_css('.news-listing__item-link')['href']
 
   # Open and parse the detailed page
-  detailed_page = Nokogiri::HTML(open(detail_link))
+  detailed_page = Nokogiri::HTML(open(detail_link, "User-Agent" => "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36"))
 
   # Extracting the table data for council reference, address, and description
   council_reference_detail = detailed_page.at_css('table tbody tr td:nth-child(1)').text.strip
