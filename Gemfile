@@ -8,6 +8,7 @@ ruby "2.6.2"
 
 gem 'capybara'
 gem 'selenium-webdriver'
-gem 'nokogiri'
+gem 'nokogiri', '1.12.5' # ⬅️ Force compatible version
 gem 'scraperwiki', git: 'https://github.com/openaustralia/scraperwiki-ruby.git', branch: 'morph_defaults'
 gem 'mechanize'
+
